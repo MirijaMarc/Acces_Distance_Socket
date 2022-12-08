@@ -1,21 +1,29 @@
 package moteur;
 
+import event.*;
 import affichage.*;
 import java.io.*;
 import java.net.*;
+import java.nio.ByteBuffer;
 import java.util.Vector;
 import javax.imageio.*;
+import java.awt.*;
+
+import java.awt.Image;
 import java.awt.image.*;
 
-public class Moteur extends Thread{
-    ServerSocket servSock;
+public class Moteur extends Thread implements Runnable{
+    Socket clientSock;
     Vector clients;
     Fenetre mywindow;
+    boolean running= true;
+    int tickCount=0;
 
-    public Moteur(ServerSocket sc){
+    public Moteur(Socket sc){
         setClients(new Vector());
-        setServSock(sc);
-        this.start();
+        clientSock=sc;
+        
+        // this.start();
     }
 
     public Fenetre getMywindow() {
@@ -34,57 +42,72 @@ public class Moteur extends Thread{
         this.clients = clients;
     }
 
-    public ServerSocket getServSock() {
-        return servSock;
-    }
-    public void setServSock(ServerSocket servSock) {
-        this.servSock = servSock;
-    }
-    
-    public void run(){
+
+    public void run() {
+        long lastTime = System.nanoTime();
+        double nsPerTick = 1000000000D / 1;
+
+        int ticks = 0;
+        int frames = 0;
+
+        long lastTimer = System.currentTimeMillis();
+        double delta = 0;
         try {
-            Socket clientSocket = servSock.accept();
-            InputStream ois =clientSocket.getInputStream();
-            setMywindow(new Fenetre());
-            getMywindow().setCpanel(new ClientPanel());
-             while(true) {
-                if (!clients.contains(clientSocket)){
-                    clients.add(clientSocket);
-                    System.out.println(clientSocket);
-                }
-                
-                byte[] bytes = new byte[1024* 1024];
-                int count = 0;
-                do {
-                count += ois.read(bytes, count, bytes.length-count);
-                } while ( !(count > 4 && bytes[count - 2] == (byte) -1 && bytes[count - 1] == (byte) -39));
-
-                BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes));
-                //  byte[] b = new byte[ois.available()];
-                //  System.out.println(image);
-                //  ois.read(b);
-                //  = ImageIO.read(ois);
-              // System.out.println(ois.available());
-                
-                //  getMywindow().setCpanel(new ClientPanel(image));
-                getMywindow().getCpanel().setImg(image);
-                // System.out.println(getMywindow().getCpanel().getImg()+"image");
-                // // getMywindow().add(getMywindow().getCpanel());
-
-                // Thread.sleep(100);
-                // // getMywindow().dispose();
-                //System.out.println(ois.available());
-                getMywindow().getCpanel().repaint();
-                getMywindow().add(getMywindow().getCpanel());
-
-                Thread.sleep(1);
+            setMywindow(new Fenetre(clientSock));
+            InputStream ois =clientSock.getInputStream();
+            DataInputStream in = new DataInputStream(ois);
+            Vector<Byte> v = new Vector<>();
             
-                
+        while (true) {
+            byte[] sizeAr = new byte[4];
+            in.readFully(sizeAr);
+            int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
+            byte[] bytes = new byte[size];
+            int totalRead=0;
+            int currentRead;
+            while(totalRead<size && (currentRead = in.read(bytes,totalRead,size-totalRead))>0){
+                totalRead+=currentRead;
             }
-            
-        } catch (Exception e) {
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes));
+            //  System.out.println(image);
+            getMywindow().setImg(image);
+            getMywindow().setSize(image.getWidth(),image.getHeight()+30);
+            getMywindow().update();        
+        
+        }
+    }catch (Exception e) {
             e.printStackTrace();
         }
-        
     }
+
+
+    // public void render(DataInputStream in) {
+    //     try {
+    //             byte[] sizeAr = new byte[4];
+    //             in.readFully(sizeAr);
+
+
+    //             int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
+    //             byte[] bytes = new byte[size];
+    //             int totalRead=0;
+    //             int currentRead;
+    //             while(totalRead<size && (currentRead = in.read(bytes,totalRead,size-totalRead))>0){
+    //                 totalRead+=currentRead;
+    //             }
+                
+                    
+
+    //             BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes));
+    //             //  System.out.println(image);
+    //             getMywindow().setImg(image);
+    //             getMywindow().setSize(image.getWidth(),image.getHeight()+30);
+    //             getMywindow().update();                
+            
+            
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //     }
+    // }
+    
+   
 }
