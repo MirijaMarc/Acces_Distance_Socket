@@ -44,14 +44,6 @@ public class Moteur extends Thread implements Runnable{
 
 
     public void run() {
-        long lastTime = System.nanoTime();
-        double nsPerTick = 1000000000D / 1;
-
-        int ticks = 0;
-        int frames = 0;
-
-        long lastTimer = System.currentTimeMillis();
-        double delta = 0;
         try {
             setMywindow(new Fenetre(clientSock));
             InputStream ois =clientSock.getInputStream();
