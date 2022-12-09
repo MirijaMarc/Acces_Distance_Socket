@@ -40,6 +40,7 @@ public class SendEcran extends Thread{
                 ois.write(size);
                 ois.write(baos.toByteArray());
                 ois.flush();
+                Thread.sleep(4);
             }           
         } catch (UnknownHostException e) {
             e.printStackTrace();

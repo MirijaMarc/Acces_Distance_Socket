@@ -64,7 +64,8 @@ public class Moteur extends Thread implements Runnable{
             //  System.out.println(image);
             getMywindow().setImg(image);
             getMywindow().setSize(image.getWidth(),image.getHeight()+30);
-            getMywindow().update();        
+            getMywindow().update();   
+            Thread.sleep(4);     
         
         }
     }catch (Exception e) {
@@ -73,33 +74,7 @@ public class Moteur extends Thread implements Runnable{
     }
 
 
-    // public void render(DataInputStream in) {
-    //     try {
-    //             byte[] sizeAr = new byte[4];
-    //             in.readFully(sizeAr);
-
-
-    //             int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
-    //             byte[] bytes = new byte[size];
-    //             int totalRead=0;
-    //             int currentRead;
-    //             while(totalRead<size && (currentRead = in.read(bytes,totalRead,size-totalRead))>0){
-    //                 totalRead+=currentRead;
-    //             }
-                
-                    
-
-    //             BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes));
-    //             //  System.out.println(image);
-    //             getMywindow().setImg(image);
-    //             getMywindow().setSize(image.getWidth(),image.getHeight()+30);
-    //             getMywindow().update();                
-            
-            
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //     }
-    // }
+    
     
    
 }
