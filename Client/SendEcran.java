@@ -27,8 +27,6 @@ public class SendEcran extends Thread{
 
     public void run(){
         try {
-            // GraphicsEnvironment gEnv = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            // GraphicsDevice gDev = gEnv.getDefaultScreenDevice();
             Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
             Rectangle rec = new Rectangle(dim);
             OutputStream ois = socket.getOutputStream();

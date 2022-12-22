@@ -22,8 +22,6 @@ public class Moteur extends Thread implements Runnable{
     public Moteur(Socket sc){
         setClients(new Vector());
         clientSock=sc;
-        
-        // this.start();
     }
 
     public Fenetre getMywindow() {

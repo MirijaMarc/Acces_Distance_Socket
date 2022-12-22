@@ -17,8 +17,7 @@ public class Fenetre extends JFrame {
         cpanel.addMouseListener(new SendEvent(s));
         cpanel.addKeyListener(new SendEvent(s));
         cpanel.addMouseMotionListener(new SendEvent(s));
-         setSize(Toolkit.getDefaultToolkit().getScreenSize());
-        //pack();
+        setSize(Toolkit.getDefaultToolkit().getScreenSize());
         setVisible(true);
         setLocationRelativeTo(null);
         setResizable(false);
